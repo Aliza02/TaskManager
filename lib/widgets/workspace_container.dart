@@ -9,8 +9,12 @@ import 'package:taskmanager/widgets/text.dart';
 class WorkSpaceContainer extends StatelessWidget {
   final Color color1;
   final Color color2;
+  final bool all;
   const WorkSpaceContainer(
-      {super.key, required this.color1, required this.color2});
+      {super.key,
+      required this.color1,
+      required this.color2,
+      required this.all});
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +45,7 @@ class WorkSpaceContainer extends StatelessWidget {
         ),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
               // alignment: Alignment.center,
@@ -77,44 +82,75 @@ class WorkSpaceContainer extends StatelessWidget {
             ),
           ),
           WorkSpaceMembers(),
-          Container(
-            alignment: Alignment.topLeft,
-            padding: EdgeInsets.only(
-              left: Get.width * 0.04,
-              bottom: Get.height * 0.01,
-            ),
-            margin: EdgeInsets.only(
-              top: Get.height * 0.012,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                text(
-                  title: "Progress",
-                  fontSize: Get.width * 0.03,
-                  align: TextAlign.start,
-                  fontWeight: AppFonts.semiBold,
-                  color: AppColors.white,
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Get.width * 0.03,
+          all == false
+              ? Container(
+                  alignment: Alignment.topLeft,
+                  padding: EdgeInsets.only(
+                    left: Get.width * 0.04,
+                    bottom: Get.height * 0.01,
                   ),
-                  child: ProgressStatus(
-                    backgroundColor: Colors.grey,
-                    strokeWidth: 3,
-                    fillValue: 55,
-                    isStrokeCapRounded: true,
-                    centerTextStyle: TextStyle(
-                      color: AppColors.white,
-                      fontSize: Get.width * 0.024,
+                  margin: EdgeInsets.only(
+                    top: Get.height * 0.012,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      text(
+                        title: "Progress",
+                        fontSize: Get.width * 0.04,
+                        align: TextAlign.start,
+                        fontWeight: AppFonts.semiBold,
+                        color: AppColors.white,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: Get.width * 0.03,
+                        ),
+                        child: ProgressStatus(
+                          backgroundColor: Colors.grey,
+                          strokeWidth: 3,
+                          fillValue: 55,
+                          isStrokeCapRounded: true,
+                          centerTextStyle: TextStyle(
+                            color: AppColors.white,
+                            fontSize: Get.width * 0.024,
+                          ),
+                          fillColor: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : SizedBox(),
+          all
+              ? Container(
+                  width: Get.width * 0.3,
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(
+                    left: Get.width * 0.04,
+                    top: Get.height * 0.013,
+                  ),
+                  // padding: EdgeInsets.only(
+                  //   left: Get.width * 0.04,
+                  //   // bottom: Get.height * 0.01,
+                  // ),
+                  decoration: ShapeDecoration(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        Get.width * 0.03,
+                      ),
                     ),
-                    fillColor: Colors.white,
+                    color: Colors.white,
                   ),
-                ),
-              ],
-            ),
-          ),
+                  child: text(
+                    title: "Completed",
+                    fontSize: Get.width * 0.04,
+                    align: TextAlign.start,
+                    fontWeight: AppFonts.semiBold,
+                    color: AppColors.black,
+                  ),
+                )
+              : SizedBox(),
         ],
       ),
     );

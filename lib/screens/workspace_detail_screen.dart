@@ -23,7 +23,7 @@ class WorkspaceDetail extends StatelessWidget {
               width: Get.width * 0.4,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: AppColors.workspaceGradientColor1[index],
+                  backgroundColor: AppColors.workspaceGradientColor1[index],
                   padding: EdgeInsets.symmetric(
                     horizontal: Get.width * 0.05,
                     vertical: Get.height * 0.02,

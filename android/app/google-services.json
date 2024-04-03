@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "326434808011",
+    "project_id": "taskmanager-6d7c9",
+    "storage_bucket": "taskmanager-6d7c9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:326434808011:android:f3c8685d68708d02107b4e",
+        "android_client_info": {
+          "package_name": "com.example.taskmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "326434808011-qbgje8qov6g11aj5mgjm9kvekfdire7c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.taskmanager",
+            "certificate_hash": "975824ea990eef59dcc871c7775f089b89b02a87"
+          }
+        },
+        {
+          "client_id": "326434808011-dueuupjk89ebi3ftbu9h4ebpemi4qpsh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRLJujnncIucOOqZtPW7wsN2QAtkf6nYo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "326434808011-dueuupjk89ebi3ftbu9h4ebpemi4qpsh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "326434808011-i7skvdjmmk1up67ko5nk368hkvj6hvl8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.taskmanager.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,8 +1,18 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:taskmanager/data/Authentications/google_signin.dart';
+import 'package:taskmanager/firebase_options.dart';
+import 'package:taskmanager/injection/database.dart';
 import 'package:taskmanager/routes/pages.dart';
+import 'package:taskmanager/routes/routes.dart';
 
-void main() {
+void main() async {
+  setup();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -16,7 +26,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.light,
       getPages: Pages.pages,
-      initialRoute: "/",
+      initialRoute: Auth.auth.currentUser==null? AppRoutes.user: AppRoutes.main,
       darkTheme: ThemeData(
           scaffoldBackgroundColor: Colors.black,
           textTheme: TextTheme(

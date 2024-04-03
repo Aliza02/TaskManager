@@ -48,10 +48,10 @@ class AddTask extends StatelessWidget {
                 align: TextAlign.start,
               ),
             ),
-            TaskField(
-                deadline: false,
-                title: 'i.e: Designing, Development, Testing, etc.',
-                NoOfLine: 1),
+            // TaskField(
+            //     deadline: false,
+            //     title: 'i.e: Designing, Development, Testing, etc.',
+            //     NoOfLine: 1),
             Container(
               padding: EdgeInsets.only(
                 top: Get.height * 0.02,
@@ -66,10 +66,10 @@ class AddTask extends StatelessWidget {
                 align: TextAlign.start,
               ),
             ),
-            const TaskField(
-                deadline: false,
-                title: 'i.e: Designing, Development, Testing, etc.',
-                NoOfLine: 8),
+            // const TaskField(
+            //     deadline: false,
+            //     title: 'i.e: Designing, Development, Testing, etc.',
+            //     NoOfLine: 8),
             Container(
               alignment: Alignment.topLeft,
               padding: EdgeInsets.only(
@@ -84,35 +84,35 @@ class AddTask extends StatelessWidget {
                 align: TextAlign.start,
               ),
             ),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      right: Get.width * 0.01,
-                    ),
-                    child: const TaskField(
-                      deadline: true,
-                      title: 'Date',
-                      NoOfLine: 1,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.only(
-                      left: Get.width * 0.01,
-                    ),
-                    child: const TaskField(
-                      deadline: true,
-                      title: 'Time',
-                      NoOfLine: 1,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            // Row(
+            //   mainAxisSize: MainAxisSize.max,
+            //   children: [
+            //     Expanded(
+            //       child: Container(
+            //         margin: EdgeInsets.only(
+            //           right: Get.width * 0.01,
+            //         ),
+            //         child: const TaskField(
+            //           deadline: true,
+            //           title: 'Date',
+            //           NoOfLine: 1,
+            //         ),
+            //       ),
+            //     ),
+            //     Expanded(
+            //       child: Container(
+            //         margin: EdgeInsets.only(
+            //           left: Get.width * 0.01,
+            //         ),
+            //         child: const TaskField(
+            //           deadline: true,
+            //           title: 'Time',
+            //           NoOfLine: 1,
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
             Container(
               alignment: Alignment.topLeft,
               padding: EdgeInsets.only(
@@ -127,11 +127,11 @@ class AddTask extends StatelessWidget {
                 fontWeight: AppFonts.semiBold,
               ),
             ),
-            const TaskField(
-              deadline: false,
-              title: 'Assign Members',
-              NoOfLine: 1,
-            ),
+            // const TaskField(
+            //   deadline: false,
+            //   title: 'Assign Members',
+            //   NoOfLine: 1,
+            // ),
             Container(
               margin: EdgeInsets.only(
                 top: Get.height * 0.01,
