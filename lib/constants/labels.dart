@@ -4,7 +4,7 @@ class AppLabels {
     'InProgress',
     'Complete'
   ];
-  static const List<String> slidingTitleLabel = ['progress', "completed"];
+  static const List<String> slidingTitleLabel = ['inProgress', "completed"];
 
   // workspace detail label
 

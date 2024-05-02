@@ -5,17 +5,45 @@ import 'package:taskmanager/Utils/utils.dart';
 import 'package:taskmanager/bloc/addprojectBloc/project_bloc.dart';
 import 'package:taskmanager/bloc/addprojectBloc/project_events.dart';
 import 'package:taskmanager/bloc/addprojectBloc/project_states.dart';
+import 'package:taskmanager/bloc/memberBloc/member_bloc.dart';
+import 'package:taskmanager/bloc/memberBloc/member_events.dart';
+import 'package:taskmanager/bloc/memberBloc/member_states.dart';
 import 'package:taskmanager/constants/colors.dart';
 import 'package:taskmanager/constants/fonts.dart';
-import 'package:taskmanager/data/databse/database_functions.dart';
-import 'package:taskmanager/injection/database.dart';
+import 'package:taskmanager/data/email/email_sending.dart';
 import 'package:taskmanager/routes/routes.dart';
+import 'package:taskmanager/screens/workspace/chips.dart';
 import 'package:taskmanager/widgets/text.dart';
 import 'package:taskmanager/widgets/workspace/header.dart';
 import 'package:taskmanager/widgets/workspace/task_field.dart';
 
-class AddWorkspace extends StatelessWidget {
+class AddWorkspace extends StatefulWidget {
   const AddWorkspace({super.key});
+
+  @override
+  State<AddWorkspace> createState() => _AddWorkspaceState();
+}
+
+class _AddWorkspaceState extends State<AddWorkspace>
+    with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+  late Animation<double> animation;
+
+  List<String> memberEmails = [];
+  @override
+  void initState() {
+    super.initState();
+    controller =
+        AnimationController(vsync: this, duration: Duration(seconds: 2));
+
+    animation = Tween(begin: 0.0, end: 1.0).animate(controller);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,43 +122,80 @@ class AddWorkspace extends StatelessWidget {
               ),
             ),
             TaskField(
-              onPressed: () {},
+              onPressed: () {
+                BlocProvider.of<MemberBloc>(context)
+                    .add(AddMember(memberEmail.text));
+                controller.forward();
+                memberEmails.add(memberEmail.text);
+                memberEmail.clear();
+              },
               isMember: true,
               controller: memberEmail,
               NoOfLine: 1,
               deadline: false,
-              title: 'i.e: Aliza',
+              title: 'i.e: abc@gmail.com',
             ),
-            // Wrap(
-            //   spacing: 2,
-            //   children: List.generate(
-            //     4,
-            //     (index) => InputChip(
-            //       label: Text("abc@gmail.com"),
-            //       labelStyle: TextStyle(
-            //           fontWeight: FontWeight.bold, color: Colors.white),
-            //       backgroundColor: AppColors.workspaceGradientColor1[1],
-            //       side: BorderSide(color: AppColors.white),
-            //       // onPressed: () => print("input chip pressed"),
-            //       deleteIconColor: Colors.white,
-
-            //       onDeleted: () => print("input chip deleted"),
-            //     ),
-            //   ),
-            // ),
+            BlocConsumer<MemberBloc, MembersStates>(
+              listener: (context, state) {
+                if (state is MemberErrorState) {
+                  Utils.showSnackBar(state.message);
+                }
+              },
+              builder: (context, state) {
+                if (state is MemberAdded) {
+                  print(state.members.length);
+                  return SizeTransition(
+                    sizeFactor: animation,
+                    child: Wrap(
+                      spacing: 2,
+                      children: List.generate(
+                          state.members.length,
+                          (index) => MemberChips(
+                              memberEmail: state.members[index],
+                              onDelete: () {
+                                BlocProvider.of<MemberBloc>(context)
+                                    .add(RemoveMember(index));
+                              })),
+                    ),
+                  );
+                } else if (state is MemberRemoved) {
+                  return SizeTransition(
+                    sizeFactor: animation,
+                    child: Wrap(
+                      spacing: 2,
+                      children: List.generate(
+                          state.members.length,
+                          (index) => MemberChips(
+                              memberEmail: state.members[index],
+                              onDelete: () {
+                                BlocProvider.of<MemberBloc>(context)
+                                    .add(RemoveMember(index));
+                              })),
+                    ),
+                  );
+                } else {
+                  return Container();
+                }
+              },
+            ),
             Container(
               width: Get.width,
               height: Get.height * 0.07,
+              padding: EdgeInsets.symmetric(
+                  // vertical: Get.height * 0.01,
+                  ),
               margin: EdgeInsets.only(
                 top: Get.height * 0.02,
+                bottom: Get.height * 0.02,
               ),
               child: ElevatedButton(
                 onPressed: () {
                   BlocProvider.of<ProjectBloc>(context).add(AddProject(
                     projectName.text,
                     projectDesc.text,
-                    memberEmail.text,
+                    memberEmails,
                   ));
+                 
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.workspaceGradientColor1[2],
@@ -153,7 +218,15 @@ class AddWorkspace extends StatelessWidget {
               listener: (context, state) {
                 if (state is ProjectAdded) {
                   Utils.showSnackBar(state.message);
+                  SendEmail.sendEmail(
+                    email: memberEmails,
+                    subject: projectName.text,
+                    projectName: projectName.text,
+                  );
                   Get.toNamed(AppRoutes.allWorkspace);
+                  projectDesc.clear();
+                  projectName.clear();
+                  BlocProvider.of<MemberBloc>(context).add(AddAllMember());
                 } else if (state is ErrorState) {
                   Utils.showSnackBar(state.message);
                 }

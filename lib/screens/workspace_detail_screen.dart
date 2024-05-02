@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:taskmanager/constants/colors.dart';
 import 'package:taskmanager/constants/fonts.dart';
 import 'package:taskmanager/constants/labels.dart';
+import 'package:taskmanager/controllers/project_controller.dart';
+import 'package:taskmanager/data/databse/database_functions.dart';
+import 'package:taskmanager/injection/database.dart';
 import 'package:taskmanager/routes/routes.dart';
 import 'package:taskmanager/widgets/text.dart';
 
@@ -11,6 +16,8 @@ class WorkspaceDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final projectController = Get.put(ProjectController());
+
     return Scaffold(
       bottomNavigationBar: BottomAppBar(
         elevation: 0.0,
@@ -19,7 +26,7 @@ class WorkspaceDetail extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: List.generate(
             2,
-            (index) => Container(
+            (index) => SizedBox(
               width: Get.width * 0.4,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -83,7 +90,7 @@ class WorkspaceDetail extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               text(
-                title: 'Project Name',
+                title: projectController.projectName.string,
                 fontSize: Get.width * 0.06,
                 fontWeight: AppFonts.bold,
                 color: AppColors.black,
@@ -171,8 +178,7 @@ class WorkspaceDetail extends StatelessWidget {
                 ),
               ),
               text(
-                title:
-                    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. ",
+                title: projectController.projectDescription.string,
                 fontSize: Get.width * 0.04,
                 fontWeight: AppFonts.normal,
                 color: AppColors.grey,
@@ -191,37 +197,64 @@ class WorkspaceDetail extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: 4,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: EdgeInsets.symmetric(
-                          vertical: Get.height * 0.01,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(width: 1, color: Colors.grey),
-                          borderRadius: BorderRadius.circular(
-                            10.0,
-                          ),
-                        ),
-                        child: ListTile(
-                          title: text(
-                            title: 'Daily Standup Meeting',
-                            fontSize: Get.width * 0.04,
-                            fontWeight: AppFonts.bold,
-                            color: AppColors.black,
-                            align: TextAlign.start,
-                          ),
-                          subtitle: text(
-                            title: "10:00 AM- 12:00PM . Ruerth Mobile Design",
-                            fontSize: Get.width * 0.03,
-                            fontWeight: AppFonts.normal,
-                            color: Colors.grey,
-                            align: TextAlign.start,
-                          ),
-                        ),
-                      );
+                child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('Project')
+                        .doc(projectController.projectId.string)
+                        .collection('Tasks')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return snapshot.data!.docs.length != 0
+                            ? ListView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: snapshot.data!.docs.length,
+                                itemBuilder: (context, index) {
+                                  DocumentSnapshot snap =
+                                      snapshot.data!.docs[index];
+                                  return Container(
+                                    margin: EdgeInsets.symmetric(
+                                      vertical: Get.height * 0.01,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          width: 1, color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(
+                                        10.0,
+                                      ),
+                                    ),
+                                    child: ListTile(
+                                      title: text(
+                                        title: snap['taskName'],
+                                        fontSize: Get.width * 0.04,
+                                        fontWeight: AppFonts.bold,
+                                        color: AppColors.black,
+                                        align: TextAlign.start,
+                                      ),
+                                      subtitle: text(
+                                        title:
+                                            "${snap['deadlineDate']}. ${snap['deadlineTime']}. ${projectController.projectName.value}",
+                                        fontSize: Get.width * 0.03,
+                                        fontWeight: AppFonts.normal,
+                                        color: Colors.grey,
+                                        align: TextAlign.start,
+                                      ),
+                                    ),
+                                  );
+                                })
+                            : Center(
+                                child: text(
+                                    title: 'No task added',
+                                    fontSize: Get.width * 0.04,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.black,
+                                    align: TextAlign.center),
+                              );
+                      }
                     }),
               ),
             ],

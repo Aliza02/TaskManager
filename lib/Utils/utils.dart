@@ -11,6 +11,16 @@ class Utils {
     );
   }
 
+  static Future<DateTime?> showDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2024),
+        lastDate: DateTime(2030));
+
+    return picked;
+  }
+
   static void showSnackBar(String message) {
     Get.showSnackbar(
       GetSnackBar(

@@ -1,8 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:taskmanager/bloc/HomePageTaskTabsBloc/bloc.dart';
+import 'package:taskmanager/bloc/TaskBloc/task_bloc.dart';
 import 'package:taskmanager/bloc/addprojectBloc/project_bloc.dart';
 import 'package:taskmanager/bloc/bottomNavBarBloc/bloc.dart';
+import 'package:taskmanager/bloc/memberBloc/member_bloc.dart';
 import 'package:taskmanager/bloc/userBloc/bloc.dart';
 import 'package:taskmanager/routes/routes.dart';
 import 'package:taskmanager/screens/Signup-in/user.dart';
@@ -35,6 +37,9 @@ class Pages {
           BlocProvider<ProjectBloc>(
             create: (context) => ProjectBloc(),
           ),
+          BlocProvider<MemberBloc>(
+            create: (context) => MemberBloc(),
+          ),
         ],
         child: MainScreen(),
       ),
@@ -64,7 +69,17 @@ class Pages {
     ),
     GetPage(
       name: AppRoutes.addTask,
-      page: () => AddTask(),
+      page: () => MultiBlocProvider(
+        providers: [
+          BlocProvider<MemberBloc>(
+            create: (context) => MemberBloc(),
+          ),
+          BlocProvider<TaskBloc>(
+            create: (context) => TaskBloc(),
+          ),
+        ],
+        child: AddTask(),
+      ),
       transition: GetTrasition.Transition.downToUp,
       transitionDuration: const Duration(milliseconds: 500),
     ),

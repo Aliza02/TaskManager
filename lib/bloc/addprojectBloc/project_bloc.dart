@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:taskmanager/bloc/addprojectBloc/project_events.dart';
 import 'package:taskmanager/bloc/addprojectBloc/project_states.dart';
 import 'package:taskmanager/data/databse/database_functions.dart';
+import 'package:taskmanager/data/email/email_sending.dart';
 import 'package:taskmanager/injection/database.dart';
 
 class ProjectBloc extends Bloc<ProjectEvents, ProjectStates> {
@@ -16,7 +17,10 @@ class ProjectBloc extends Bloc<ProjectEvents, ProjectStates> {
             email: event.memberEmail,
             projectDescription: event.projectDescription,
             projectName: event.projectName);
+
         if (added) {
+          print(event.memberEmail.length);
+          
           emit(ProjectAdded("Project has been created Successfully"));
         } else {
           emit(ErrorState("Project is not created: Try Again"));

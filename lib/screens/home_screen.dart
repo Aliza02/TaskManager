@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:taskmanager/controllers/project_controller.dart';
 import 'package:taskmanager/data/Authentications/google_signin.dart';
 import 'package:taskmanager/bloc/HomePageTaskTabsBloc/bloc.dart';
 import 'package:taskmanager/bloc/HomePageTaskTabsBloc/events.dart';
@@ -12,6 +14,8 @@ import 'package:taskmanager/bloc/userBloc/states.dart';
 import 'package:taskmanager/constants/colors.dart';
 import 'package:taskmanager/constants/fonts.dart';
 import 'package:taskmanager/constants/labels.dart';
+import 'package:taskmanager/data/databse/database_functions.dart';
+import 'package:taskmanager/injection/database.dart';
 import 'package:taskmanager/routes/routes.dart';
 import 'package:taskmanager/widgets/task_tile.dart';
 import 'package:taskmanager/widgets/text.dart';
@@ -25,15 +29,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final projectController = Get.put(ProjectController());
   // final ScrollController _scrollController = ScrollController();
   final GlobalKey<AnimatedListState> listKey = GlobalKey();
-
-  // void initState() {
-  //   super.initState();
-  //   //_scrollController.addListener(() {if(_scrollController.position.pixels==_scrollController.position.maxScrollExtent){
-
-  //   //  }})
-  // }
+  var project = locator<Database>;
+  int colorIndex1 = 0;
+  int colorIndex2 = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0.0,
         scrolledUnderElevation: 0.0,
         title: text(
-          title: Auth.auth.currentUser!.displayName.toString() ?? 'Unknown',
+          title: Auth.auth.currentUser!.displayName.toString(),
           fontSize: Get.width * 0.06,
           fontWeight: AppFonts.bold,
           color: AppColors.black,
@@ -104,23 +105,52 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(
-                  3,
-                  (index) {
-                    return InkWell(
-                      onTap: () {
-                        Get.toNamed(AppRoutes.workSpaceDetail);
-                      },
-                      child: WorkSpaceContainer(
-                        all: false,
-                        color1: AppColors.workspaceGradientColor1[index],
-                        color2: AppColors.workspaceGradientColor2[index],
-                      ),
-                    );
-                  },
-                ),
-              ),
+              child: FutureBuilder(
+                  future: project().getCreatedProjects(),
+                  builder: (context, snapshot) {
+                    return snapshot.hasData
+                        ? Row(
+                            children: List.generate(
+                              snapshot.data!.docs.length,
+                              (index) {
+                                DocumentSnapshot snap =
+                                    snapshot.data!.docs[index];
+                                if (colorIndex1 == 3 || colorIndex2 == 3) {
+                                  colorIndex1 = 0;
+                                  colorIndex2 = 0;
+                                }
+                                return InkWell(
+                                  onTap: () {
+                                    projectController.members.clear();
+                                    Get.toNamed(AppRoutes.workSpaceDetail);
+                                    projectController.projectId.value =
+                                        snap['projectId'];
+                                    projectController.projectName.value =
+                                        snap['projectName'];
+                                    projectController.projectDescription.value =
+                                        snap['projectDescription'];
+                                    projectController.members
+                                        .addAll(snap['email']);
+                                  },
+                                  child: WorkSpaceContainer(
+                                    projectName: snap['projectName'],
+                                    all: false,
+                                    color1: AppColors
+                                        .workspaceGradientColor1[colorIndex1++],
+                                    color2: AppColors
+                                        .workspaceGradientColor2[colorIndex2++],
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                        : SizedBox(
+                            width: Get.width,
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                  }),
             ),
             Container(
               margin: EdgeInsets.only(
@@ -181,13 +211,22 @@ class _HomeScreenState extends State<HomeScreen> {
               }),
             ),
             Expanded(
-              child: ListView.builder(
-                  itemCount: 3,
-                  itemBuilder: (context, index) {
-                    return BlocBuilder<homePageTabBarBloc, tabBarStates>(
-                      builder: (context, state) {
-                        return (state is activeState && state.index == index)
-                            ? AnimatedList(
+              child: BlocBuilder<homePageTabBarBloc, tabBarStates>(
+                builder: (context, state) {
+                  return (state is activeState)
+                      ? FutureBuilder(
+                          future: project().getAssignedTasks(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else {
+                              // DocumentSnapshot snap = snapshot.data!.docs[0];
+                              // print(snap.data());
+                              // print(snapshot.data!.docs.length);
+
+                              return AnimatedList(
                                 key: listKey,
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
@@ -210,11 +249,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                       index: index,
                                       animation: animation);
                                 },
-                              )
-                            : SizedBox();
-                      },
-                    );
-                  }),
+                              );
+                            }
+                          })
+                      : SizedBox();
+                },
+              ),
             )
           ],
         ),

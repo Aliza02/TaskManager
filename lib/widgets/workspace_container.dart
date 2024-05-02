@@ -10,11 +10,14 @@ class WorkSpaceContainer extends StatelessWidget {
   final Color color1;
   final Color color2;
   final bool all;
+  final String projectName;
+
   const WorkSpaceContainer(
       {super.key,
       required this.color1,
       required this.color2,
-      required this.all});
+      required this.all,
+      required this.projectName});
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +33,7 @@ class WorkSpaceContainer extends StatelessWidget {
           BoxShadow(
             color: Colors.grey.withOpacity(0.5),
             spreadRadius: 0.5,
-            blurRadius: 2,
-            offset: Offset(0, 3),
-            blurStyle: BlurStyle.solid,
+            blurRadius: 1,
           ),
         ],
         gradient: LinearGradient(
@@ -53,12 +54,15 @@ class WorkSpaceContainer extends StatelessWidget {
                 top: Get.height * 0.02,
               ),
               padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
-              child: text(
-                title: "Ruerth Mobile Design",
-                align: TextAlign.start,
-                fontSize: Get.width * 0.05,
-                fontWeight: AppFonts.bold,
-                color: AppColors.white,
+              child: Text(
+                projectName,
+                textAlign: TextAlign.start,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: Get.width * 0.05,
+                  fontWeight: AppFonts.bold,
+                  color: AppColors.white,
+                ),
               )),
           Container(
             margin: EdgeInsets.only(
