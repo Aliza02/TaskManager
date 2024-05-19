@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:taskmanager/controllers/project_controller.dart';
 import 'package:taskmanager/data/Authentications/google_signin.dart';
@@ -53,44 +54,93 @@ class Database {
     required List<String> members,
   }) async {
     await firestore
-        .collection('Project')
-        .doc(projectController.projectId.string)
         .collection('Tasks')
-        .doc(task)
+        .doc(projectController.projectId.string)
         .set({
-      'taskName': task,
-      'description': description,
-      'deadlineDate': date,
-      'deadlineTime': time,
-      'Members': members,
-      'status': 'none',
-    }, SetOptions(merge: true));
+      'projectId': projectController.projectId.string,
+    });
+
+    await firestore
+        .collection('Tasks')
+        .doc(projectController.projectId.string)
+        .collection('projectTasks')
+        .doc()
+        .set(
+      {
+        'taskName': task,
+        'description': description,
+        'deadlineDate': date,
+        'deadlineTime': time,
+        'Members': members,
+        'projectName': projectController.projectName.string,
+        'status': 'none',
+      },
+      SetOptions(merge: true),
+    );
 
     return true;
   }
 
-  Future<DocumentSnapshot> getProject() async {
-    return await firestore
-        .collection('Project')
-        .doc(projectController.projectId.string)
-        .get();
-  }
+  // Future<DocumentSnapshot> getProject() async {
+  //   return await firestore
+  //       .collection('Project')
+  //       .doc(projectController.projectId.string)
+  //       .get();
+  // }
 
   Future<QuerySnapshot> getAllProjects() async {
     return await firestore.collection('Project').get();
   }
 
-  Future<void> getAssignedTasks() async {
-    await firestore
-        .collection('Project')
-        .where('email', arrayContains: Auth.auth.currentUser!.email)
-        .get()
-        .then((value) => {
-              value.docs.forEach((element) {
-                print(element.id);
-                
-              })
-            });
-    // return null;
+  Stream<QuerySnapshot> getAssignedTasks() {
+    String currentUserEmail =
+        FirebaseAuth.instance.currentUser!.email.toString();
+    return firestore
+        .collectionGroup('projectTasks')
+        .where(
+          'Members',
+          arrayContains: currentUserEmail,
+        )
+        .where('status', isEqualTo: 'none')
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getInProgressTasks() {
+    String currentUserEmail =
+        FirebaseAuth.instance.currentUser!.email.toString();
+    return firestore
+        .collectionGroup('projectTasks')
+        .where(
+          'Members',
+          arrayContains: currentUserEmail,
+        )
+        .where('status', isEqualTo: 'inProgress')
+        .snapshots();
+  }
+   Stream<QuerySnapshot> getCompletedTasks() {
+    String currentUserEmail =
+        FirebaseAuth.instance.currentUser!.email.toString();
+    return firestore
+        .collectionGroup('projectTasks')
+        .where(
+          'Members',
+          arrayContains: currentUserEmail,
+        )
+        .where('status', isEqualTo: 'Completed')
+        .snapshots();
+  }
+
+  Future<bool> updateTaskStatusToInProgress(String taskName) async {
+    QuerySnapshot snap = await firestore
+        .collectionGroup('projectTasks')
+        .where('taskName', isEqualTo: taskName)
+        .where('Members', arrayContains: Auth.auth.currentUser!.email)
+        .get();
+
+    snap.docs[0].reference.update({'status': 'inProgress'});
+
+    print(snap.docs.length);
+
+    return true;
   }
 }

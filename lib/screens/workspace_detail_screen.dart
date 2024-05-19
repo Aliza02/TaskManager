@@ -199,9 +199,9 @@ class WorkspaceDetail extends StatelessWidget {
               Expanded(
                 child: StreamBuilder(
                     stream: FirebaseFirestore.instance
-                        .collection('Project')
-                        .doc(projectController.projectId.string)
                         .collection('Tasks')
+                        .doc(projectController.projectId.string)
+                        .collection('projectTasks')
                         .snapshots(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
@@ -245,7 +245,8 @@ class WorkspaceDetail extends StatelessWidget {
                                       ),
                                     ),
                                   );
-                                })
+                                },
+                                )
                             : Center(
                                 child: text(
                                     title: 'No task added',

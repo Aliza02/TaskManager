@@ -213,46 +213,66 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: BlocBuilder<homePageTabBarBloc, tabBarStates>(
                 builder: (context, state) {
-                  return (state is activeState)
-                      ? FutureBuilder(
-                          future: project().getAssignedTasks(),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData) {
-                              return Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            } else {
-                              // DocumentSnapshot snap = snapshot.data!.docs[0];
-                              // print(snap.data());
-                              // print(snapshot.data!.docs.length);
+                  return StreamBuilder(
+                      stream: (state is activeState && state.index == 0)
+                          ? project().getAssignedTasks()
+                          : (state is activeState && state.index == 1)
+                              ? project().getInProgressTasks()
+                              : project().getCompletedTasks(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else {
+                          return snapshot.data!.docs.length != 0
+                              ? AnimatedList(
+                                  key: listKey,
+                                  scrollDirection: Axis.vertical,
+                                  shrinkWrap: true,
+                                  physics: const BouncingScrollPhysics(),
+                                  initialItemCount: snapshot.data!.docs.length,
+                                  itemBuilder: (context, index, animation) {
+                                    DocumentSnapshot snap =
+                                        snapshot.data!.docs[index];
 
-                              return AnimatedList(
-                                key: listKey,
-                                scrollDirection: Axis.vertical,
-                                shrinkWrap: true,
-                                physics: const BouncingScrollPhysics(),
-                                initialItemCount: 3,
-                                itemBuilder: (context, index, animation) {
-                                  return TaskTile(
-                                      taskName: 'asa',
-                                      onRemove: () {
-                                        listKey.currentState!.removeItem(
-                                          index,
-                                          (context, animation) => TaskTile(
-                                            index: index,
-                                            animation: animation,
-                                            onRemove: () {},
-                                            taskName: 'sad',
-                                          ),
-                                        );
-                                      },
-                                      index: index,
-                                      animation: animation);
-                                },
-                              );
-                            }
-                          })
-                      : SizedBox();
+                                    return TaskTile(
+                                        taskName: snap['taskName'],
+                                        deadlineDate: snap['deadlineDate'],
+                                        projectName: snap['projectName'],
+                                        deadlineTime: snap['deadlineTime'],
+                                        onRemove: () {
+                                          listKey.currentState!.removeItem(
+                                            index,
+                                            (context, animation) => TaskTile(
+                                              index: index,
+                                              animation: animation,
+                                              onRemove: () {},
+                                              taskName: snap['taskName'],
+                                              deadlineDate:
+                                                  snap['deadlineDate'],
+                                              projectName: snap['projectName'],
+                                              deadlineTime:
+                                                  snap['deadlineTime'],
+                                            ),
+                                          );
+                                        },
+                                        index: index,
+                                        animation: animation);
+                                  },
+                                )
+                              : Center(
+                                  child: text(
+                                    title: 'No Task to display',
+                                    align: TextAlign.center,
+                                    color: AppColors.black,
+                                    fontSize: Get.width * 0.05,
+                                    fontWeight: AppFonts.semiBold,
+                                  ),
+                                );
+                        }
+                      });
+                  // : SizedBox();
                 },
               ),
             )
