@@ -129,11 +129,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                         snap['projectName'];
                                     projectController.projectDescription.value =
                                         snap['projectDescription'];
+                                    projectController.projectCreationDate
+                                        .value = snap['createdOn'];
                                     projectController.members
                                         .addAll(snap['email']);
                                   },
                                   child: WorkSpaceContainer(
-                                    projectId: snap['projectId'].toString() ,
+                                    projectId: snap['projectId'].toString(),
                                     projectCreationDate: snap['createdOn'],
                                     membersLength: snap['email'].length,
                                     projectName: snap['projectName'],

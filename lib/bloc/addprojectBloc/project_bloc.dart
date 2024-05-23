@@ -13,6 +13,11 @@ class ProjectBloc extends Bloc<ProjectEvents, ProjectStates> {
       if (event.projectName.isNotEmpty &&
           event.projectDescription.isNotEmpty &&
           event.memberEmail.isNotEmpty) {
+        SendEmail.sendEmail(
+          email: event.memberEmail,
+          subject: event.projectName,
+          projectName: event.projectName,
+        );
         bool added = await addProject().addWorkspace(
             email: event.memberEmail,
             projectDescription: event.projectDescription,

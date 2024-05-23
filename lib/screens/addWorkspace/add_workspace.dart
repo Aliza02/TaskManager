@@ -218,11 +218,7 @@ class _AddWorkspaceState extends State<AddWorkspace>
               listener: (context, state) {
                 if (state is ProjectAdded) {
                   Utils.showSnackBar(state.message);
-                  SendEmail.sendEmail(
-                    email: memberEmails,
-                    subject: projectName.text,
-                    projectName: projectName.text,
-                  );
+                 
                   Get.toNamed(AppRoutes.allWorkspace);
                   projectDesc.clear();
                   projectName.clear();

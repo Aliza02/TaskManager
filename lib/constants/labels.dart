@@ -9,7 +9,7 @@ class AppLabels {
   // workspace detail label
 
   static const List<String> projectDetailLabel = [
-    'Due Date',
+    'Created on',
     'Members',
   ];
   static const List<String> projectDetailButtonLabel = [

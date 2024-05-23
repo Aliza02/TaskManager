@@ -134,4 +134,33 @@ class Database {
     double percentage = completed.count! / allDocs.count!.toInt();
     return percentage;
   }
+
+  Future<bool> removeMemberToProject({required String email}) async {
+    await firestore
+        .collection('Project')
+        .doc(projectController.projectId.string)
+        .update({
+      'email': FieldValue.arrayRemove([email])
+    });
+
+    return true;
+  }
+
+  Future<bool> addMemberToProject({required String email}) async {
+    await firestore
+        .collection('Project')
+        .doc(projectController.projectId.string)
+        .update({
+      'email': FieldValue.arrayUnion([email])
+    });
+
+    return true;
+  }
+
+  Stream<DocumentSnapshot> getMembersOfProject() {
+    return firestore
+        .collection('Project')
+        .doc(projectController.projectId.string)
+        .snapshots();
+  }
 }

@@ -146,7 +146,8 @@ class WorkspaceDetail extends StatelessWidget {
                             ),
                             index == 0
                                 ? text(
-                                    title: '12/sept/21',
+                                    title: projectController
+                                        .projectCreationDate.value,
                                     fontSize: Get.width * 0.04,
                                     fontWeight: AppFonts.semiBold,
                                     color: AppColors.black,
