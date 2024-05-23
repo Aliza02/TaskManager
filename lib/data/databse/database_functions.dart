@@ -17,11 +17,11 @@ class Database {
     return _projectId;
   }
 
-  Future<bool> addWorkspace({
-    required String projectName,
-    required String projectDescription,
-    required List<String> email,
-  }) async {
+  Future<bool> addWorkspace(
+      {required String projectName,
+      required String projectDescription,
+      required List<String> email,
+      required String creationDate}) async {
     int projectId = generateProjectNo();
 
     await firestore.collection('Project').doc(projectId.toString()).set(
@@ -31,6 +31,7 @@ class Database {
         "projectDescription": projectDescription,
         "email": email,
         "projectCreatedBy": Auth.auth.currentUser!.email,
+        "createdOn": creationDate
       },
       SetOptions(merge: true),
     );
@@ -38,12 +39,11 @@ class Database {
     return true;
   }
 
-  Future<QuerySnapshot> getCreatedProjects() async {
-    QuerySnapshot snap = await firestore
+  Stream<QuerySnapshot> getCreatedProjects() {
+    return firestore
         .collection('Project')
         .where('projectCreatedBy', isEqualTo: Auth.auth.currentUser!.email)
-        .get();
-    return snap;
+        .snapshots();
   }
 
   Future<bool> addTaskToProject({
@@ -81,66 +81,57 @@ class Database {
     return true;
   }
 
-  // Future<DocumentSnapshot> getProject() async {
-  //   return await firestore
-  //       .collection('Project')
-  //       .doc(projectController.projectId.string)
-  //       .get();
-  // }
-
   Future<QuerySnapshot> getAllProjects() async {
     return await firestore.collection('Project').get();
   }
 
-  Stream<QuerySnapshot> getAssignedTasks() {
+  Stream<QuerySnapshot> getTasksAsPerStatus({required String taskStatus}) {
     String currentUserEmail =
         FirebaseAuth.instance.currentUser!.email.toString();
+    print(taskStatus);
     return firestore
         .collectionGroup('projectTasks')
         .where(
           'Members',
           arrayContains: currentUserEmail,
         )
-        .where('status', isEqualTo: 'none')
+        .where('status', isEqualTo: taskStatus)
         .snapshots();
   }
 
-  Stream<QuerySnapshot> getInProgressTasks() {
-    String currentUserEmail =
-        FirebaseAuth.instance.currentUser!.email.toString();
-    return firestore
-        .collectionGroup('projectTasks')
-        .where(
-          'Members',
-          arrayContains: currentUserEmail,
-        )
-        .where('status', isEqualTo: 'inProgress')
-        .snapshots();
-  }
-   Stream<QuerySnapshot> getCompletedTasks() {
-    String currentUserEmail =
-        FirebaseAuth.instance.currentUser!.email.toString();
-    return firestore
-        .collectionGroup('projectTasks')
-        .where(
-          'Members',
-          arrayContains: currentUserEmail,
-        )
-        .where('status', isEqualTo: 'Completed')
-        .snapshots();
-  }
-
-  Future<bool> updateTaskStatusToInProgress(String taskName) async {
+  Future<bool> updateTaskStatus(
+      {required String taskName, required String changeStatusTo}) async {
     QuerySnapshot snap = await firestore
         .collectionGroup('projectTasks')
         .where('taskName', isEqualTo: taskName)
         .where('Members', arrayContains: Auth.auth.currentUser!.email)
         .get();
 
-    snap.docs[0].reference.update({'status': 'inProgress'});
+    snap.docs[0].reference.update({'status': changeStatusTo});
 
     print(snap.docs.length);
 
     return true;
+  }
+
+  Future<double?> getProgress({required String id}) async {
+    AggregateQuerySnapshot allDocs = await firestore
+        .collection('Tasks')
+        .doc(id.toString())
+        .collection('projectTasks')
+        // .where('status', isEqualTo: 'Completed')
+        .count()
+        .get();
+    AggregateQuerySnapshot completed = await firestore
+        .collection('Tasks')
+        .doc(id)
+        .collection('projectTasks')
+        .where('status', isEqualTo: 'Completed')
+        .count()
+        .get();
+    print(allDocs.count);
+    print(completed.count);
+    double percentage = completed.count! / allDocs.count!.toInt();
+    return percentage;
   }
 }

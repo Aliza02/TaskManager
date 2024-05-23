@@ -72,6 +72,9 @@ class AllWorkspace extends StatelessWidget {
                           projectController.members.addAll(snap['email']);
                         },
                         child: WorkSpaceContainer(
+                          projectId: 'sd',
+                          projectCreationDate: snap['createdOn'],
+                          membersLength: 3,
                           projectName: snap['projectName'],
                           all: true,
                           color1: AppColors.workspaceGradientColor1[2],

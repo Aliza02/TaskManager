@@ -190,12 +190,12 @@ class _AddWorkspaceState extends State<AddWorkspace>
               ),
               child: ElevatedButton(
                 onPressed: () {
+                  DateTime? date = DateTime.now();
                   BlocProvider.of<ProjectBloc>(context).add(AddProject(
-                    projectName.text,
-                    projectDesc.text,
-                    memberEmails,
-                  ));
-                 
+                      projectName.text,
+                      projectDesc.text,
+                      memberEmails,
+                      "${date.day}/${date.month}/${date.year}"));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.workspaceGradientColor1[2],

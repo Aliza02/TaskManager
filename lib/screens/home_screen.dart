@@ -105,8 +105,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: FutureBuilder(
-                  future: project().getCreatedProjects(),
+              child: StreamBuilder(
+                  stream: project().getCreatedProjects(),
                   builder: (context, snapshot) {
                     return snapshot.hasData
                         ? Row(
@@ -133,6 +133,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         .addAll(snap['email']);
                                   },
                                   child: WorkSpaceContainer(
+                                    projectId: snap['projectId'].toString() ,
+                                    projectCreationDate: snap['createdOn'],
+                                    membersLength: snap['email'].length,
                                     projectName: snap['projectName'],
                                     all: false,
                                     color1: AppColors
@@ -215,17 +218,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context, state) {
                   return StreamBuilder(
                       stream: (state is activeState && state.index == 0)
-                          ? project().getAssignedTasks()
+                          ? project().getTasksAsPerStatus(taskStatus: 'none')
                           : (state is activeState && state.index == 1)
-                              ? project().getInProgressTasks()
-                              : project().getCompletedTasks(),
+                              ? project()
+                                  .getTasksAsPerStatus(taskStatus: 'inProgress')
+                              : project()
+                                  .getTasksAsPerStatus(taskStatus: 'Completed'),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
                           return const Center(
                             child: CircularProgressIndicator(),
                           );
                         } else {
-                          return snapshot.data!.docs.length != 0
+                          return snapshot.data!.docs.isNotEmpty &&
+                                  snapshot.connectionState ==
+                                      ConnectionState.active
                               ? AnimatedList(
                                   key: listKey,
                                   scrollDirection: Axis.vertical,
@@ -241,12 +248,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                         deadlineDate: snap['deadlineDate'],
                                         projectName: snap['projectName'],
                                         deadlineTime: snap['deadlineTime'],
+                                        enableProgressButton:
+                                            (state is activeState &&
+                                                    state.index == 1)
+                                                ? false
+                                                : true,
+                                        disableSlideButton:
+                                            (state is activeState &&
+                                                    state.index == 2)
+                                                ? true
+                                                : false,
                                         onRemove: () {
                                           listKey.currentState!.removeItem(
                                             index,
                                             (context, animation) => TaskTile(
                                               index: index,
                                               animation: animation,
+                                              disableSlideButton:
+                                                  (state is activeState &&
+                                                          state.index == 2)
+                                                      ? true
+                                                      : false,
+                                              enableProgressButton:
+                                                  (state is activeState &&
+                                                          state.index == 1)
+                                                      ? false
+                                                      : true,
                                               onRemove: () {},
                                               taskName: snap['taskName'],
                                               deadlineDate:

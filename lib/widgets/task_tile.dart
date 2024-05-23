@@ -17,6 +17,8 @@ class TaskTile extends StatefulWidget {
   final Function onRemove;
   final int index;
   final Animation<double> animation;
+  final bool enableProgressButton;
+  final bool disableSlideButton;
   const TaskTile(
       {super.key,
       required this.taskName,
@@ -25,7 +27,9 @@ class TaskTile extends StatefulWidget {
       required this.animation,
       required this.deadlineDate,
       required this.deadlineTime,
-      required this.projectName});
+      required this.projectName,
+      required this.enableProgressButton,
+      required this.disableSlideButton});
 
   @override
   State<TaskTile> createState() => _TaskTileState();
@@ -41,16 +45,25 @@ class _TaskTileState extends State<TaskTile> {
         endActionPane: ActionPane(
           motion: const ScrollMotion(),
           children: List.generate(
-            2,
+            widget.disableSlideButton == true
+                ? 0
+                : widget.enableProgressButton == true
+                    ? 2
+                    : 1,
             (index) => Expanded(
               child: InkWell(
                 onTap: () {
-                  if (index == 0) {
+                  if (widget.enableProgressButton == true) {
                     print('progress');
                     widget.onRemove();
-                    project().updateTaskStatusToInProgress(widget.taskName);
+                    project().updateTaskStatus(
+                        taskName: widget.taskName,
+                        changeStatusTo: 'inProgress');
                     setState(() {});
                   } else {
+                    project().updateTaskStatus(
+                        taskName: widget.taskName, changeStatusTo: 'Completed');
+                    widget.onRemove();
                     print('compelterd');
                   }
                 },
@@ -67,21 +80,23 @@ class _TaskTileState extends State<TaskTile> {
                     color: [
                       Color(0xFF21B7CA),
                       AppColors.workspaceGradientColor1[1]
-                    ][index],
+                    ][widget.enableProgressButton == true ? index : 1],
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       text(
-                        title: AppLabels.slidingTitleLabel[index],
+                        title: AppLabels.slidingTitleLabel[
+                            widget.enableProgressButton == true ? index : 1],
                         fontSize: Get.width * 0.04,
                         fontWeight: AppFonts.bold,
                         color: AppColors.white,
                         align: TextAlign.start,
                       ),
                       Icon(
-                        AppIcons.slidingTileIcon[index],
+                        AppIcons.slidingTileIcon[
+                            widget.enableProgressButton == true ? index : 1],
                         color: AppColors.white,
                       ),
                     ],

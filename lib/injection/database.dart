@@ -3,5 +3,6 @@ import 'package:taskmanager/data/databse/database_functions.dart';
 
 GetIt locator = GetIt.instance;
 void setup() {
-  locator.registerFactory<Database>(() => Database());
+  locator.registerSingleton(Database());
+  // locator.registerFactory<Database>(() => Database());
 }

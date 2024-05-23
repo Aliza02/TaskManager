@@ -16,11 +16,12 @@ class ProjectBloc extends Bloc<ProjectEvents, ProjectStates> {
         bool added = await addProject().addWorkspace(
             email: event.memberEmail,
             projectDescription: event.projectDescription,
-            projectName: event.projectName);
+            projectName: event.projectName,
+            creationDate: event.creationDate);
 
         if (added) {
           print(event.memberEmail.length);
-          
+
           emit(ProjectAdded("Project has been created Successfully"));
         } else {
           emit(ErrorState("Project is not created: Try Again"));

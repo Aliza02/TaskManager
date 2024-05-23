@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_progress_status/flutter_progress_status.dart';
 import 'package:get/get.dart';
 import 'package:taskmanager/constants/colors.dart';
 import 'package:taskmanager/constants/fonts.dart';
+import 'package:taskmanager/data/databse/database_functions.dart';
+import 'package:taskmanager/injection/database.dart';
 import 'package:taskmanager/widgets/members_container.dart';
 import 'package:taskmanager/widgets/text.dart';
 
@@ -11,18 +14,24 @@ class WorkSpaceContainer extends StatelessWidget {
   final Color color2;
   final bool all;
   final String projectName;
+  final int membersLength;
+  final String projectId;
+  final String projectCreationDate;
 
   const WorkSpaceContainer(
       {super.key,
       required this.color1,
       required this.color2,
       required this.all,
-      required this.projectName});
+      required this.projectName,
+      required this.membersLength,
+      required this.projectId,
+      required this.projectCreationDate});
 
   @override
   Widget build(BuildContext context) {
+    var project = locator<Database>;
     return Container(
-      // height: Get.height * 0.25,
       width: Get.width * 0.5,
       margin: EdgeInsets.only(
         top: Get.height * 0.02,
@@ -76,7 +85,7 @@ class WorkSpaceContainer extends StatelessWidget {
                   color: Colors.white,
                 ),
                 text(
-                  title: '12/12/2021',
+                  title: projectCreationDate,
                   fontSize: Get.width * 0.03,
                   fontWeight: AppFonts.bold,
                   color: AppColors.white,
@@ -85,7 +94,9 @@ class WorkSpaceContainer extends StatelessWidget {
               ],
             ),
           ),
-          WorkSpaceMembers(),
+          WorkSpaceMembers(
+            membersLength: membersLength,
+          ),
           all == false
               ? Container(
                   alignment: Alignment.topLeft,
@@ -110,16 +121,30 @@ class WorkSpaceContainer extends StatelessWidget {
                         padding: EdgeInsets.symmetric(
                           horizontal: Get.width * 0.03,
                         ),
-                        child: ProgressStatus(
-                          backgroundColor: Colors.grey,
-                          strokeWidth: 3,
-                          fillValue: 55,
-                          isStrokeCapRounded: true,
-                          centerTextStyle: TextStyle(
-                            color: AppColors.white,
-                            fontSize: Get.width * 0.024,
-                          ),
-                          fillColor: Colors.white,
+                        child: FutureBuilder(
+                          future: project().getProgress(id: projectId),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else {
+                              print("sad:${snapshot.data}");
+                              return ProgressStatus(
+                                backgroundColor: Colors.grey,
+                                strokeWidth: 3,
+                                fillValue: snapshot.data!.isNaN
+                                    ? 0
+                                    : snapshot.data! * 100,
+                                isStrokeCapRounded: true,
+                                centerTextStyle: TextStyle(
+                                  color: AppColors.white,
+                                  fontSize: Get.width * 0.024,
+                                ),
+                                fillColor: Colors.white,
+                              );
+                            }
+                          },
                         ),
                       ),
                     ],

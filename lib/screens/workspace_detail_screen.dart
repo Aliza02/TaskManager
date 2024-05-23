@@ -66,7 +66,7 @@ class WorkspaceDetail extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            Get.back();
+            Get.offNamed(AppRoutes.main);
           },
         ),
         title: text(
@@ -246,7 +246,7 @@ class WorkspaceDetail extends StatelessWidget {
                                     ),
                                   );
                                 },
-                                )
+                              )
                             : Center(
                                 child: text(
                                     title: 'No task added',
