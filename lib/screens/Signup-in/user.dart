@@ -46,7 +46,7 @@ class User extends StatelessWidget {
                   fontSize: Get.width * 0.06,
                 ),
                 children: [
-                  TextSpan(
+                  const TextSpan(
                       text: 'WorkSync',
                       style: TextStyle(
                         fontWeight: AppFonts.bold,
@@ -68,10 +68,11 @@ class User extends StatelessWidget {
               listener: (context, state) {
                 if (state is Userloading && state.loading == false) {
                   Get.toNamed(AppRoutes.main);
+                } else if (state is Userloading && state.loading == true) {
+                  Utils.showtoast('Signing in');
                 }
               },
               builder: (context, state) {
-                print(state);
                 if (state is EnableGoogleSignin) {
                   return SizedBox(
                     width: Get.width * 0.8,
@@ -87,7 +88,6 @@ class User extends StatelessWidget {
                       onPressed: () {
                         BlocProvider.of<LoginSignUpBloc>(context)
                             .add(GoogleSigning(true));
-                        Utils.showtoast('Signing in');
                       },
                       icon: Image.asset(
                         AppIcons.googleLogo,

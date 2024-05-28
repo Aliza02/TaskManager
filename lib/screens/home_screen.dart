@@ -16,6 +16,7 @@ import 'package:taskmanager/constants/fonts.dart';
 import 'package:taskmanager/constants/labels.dart';
 import 'package:taskmanager/data/databse/database_functions.dart';
 import 'package:taskmanager/injection/database.dart';
+import 'package:taskmanager/notification/notification_services.dart';
 import 'package:taskmanager/routes/routes.dart';
 import 'package:taskmanager/widgets/task_tile.dart';
 import 'package:taskmanager/widgets/text.dart';
@@ -33,8 +34,18 @@ class _HomeScreenState extends State<HomeScreen> {
   // final ScrollController _scrollController = ScrollController();
   final GlobalKey<AnimatedListState> listKey = GlobalKey();
   var project = locator<Database>;
+  NotificationServices notification = NotificationServices();
   int colorIndex1 = 0;
   int colorIndex2 = 0;
+
+  @override
+  void initState() {
+    notification.requestPermission();
+    notification.getDeviceToken();
+    notification.firebaseinit(context);
+    notification.setupInteractMessage(context);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 left: Get.width * 0.04,
               ),
               child: text(
-                title: 'Workspace',
+                title: 'My Workspace',
                 fontSize: Get.width * 0.06,
                 fontWeight: AppFonts.bold,
                 color: AppColors.black,
@@ -115,6 +126,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               (index) {
                                 DocumentSnapshot snap =
                                     snapshot.data!.docs[index];
+                                 projectController.projectCreatedBy.value =
+                                        snap['projectCreatedBy'];
+                                        projectController.members
+                                        .addAll(snap['email']);
                                 if (colorIndex1 == 3 || colorIndex2 == 3) {
                                   colorIndex1 = 0;
                                   colorIndex2 = 0;
@@ -125,6 +140,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Get.toNamed(AppRoutes.workSpaceDetail);
                                     projectController.projectId.value =
                                         snap['projectId'];
+                                    projectController.projectCreatedBy.value =
+                                        snap['projectCreatedBy'];
                                     projectController.projectName.value =
                                         snap['projectName'];
                                     projectController.projectDescription.value =

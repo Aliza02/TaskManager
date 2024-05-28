@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +13,7 @@ import 'package:taskmanager/bloc/removeMemberFromProjectBloc/removeMember_states
 import 'package:taskmanager/constants/colors.dart';
 import 'package:taskmanager/constants/fonts.dart';
 import 'package:taskmanager/controllers/project_controller.dart';
+import 'package:taskmanager/data/Authentications/google_signin.dart';
 import 'package:taskmanager/data/databse/database_functions.dart';
 import 'package:taskmanager/injection/database.dart';
 import 'package:taskmanager/widgets/text.dart';
@@ -109,8 +111,35 @@ class AddMemberScreen extends StatelessWidget {
                                     fontWeight: AppFonts.regular,
                                     color: AppColors.black,
                                     align: TextAlign.start),
-                                leading: const CircleAvatar(
-                                  child: Icon(Icons.person),
+                                leading: SizedBox(
+                                  width: Get.width * 0.1,
+                                  height: Get.height * 0.1,
+                                  child: StreamBuilder(
+                                      stream: FirebaseFirestore.instance
+                                          .collection('User')
+                                          .where('email',
+                                              isEqualTo: snap['email'][index])
+                                          .snapshots(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                        
+                                          return CircleAvatar(
+                                            child: ClipOval(
+                                              child:
+                                                  snapshot.data!.docs.isNotEmpty
+                                                      ? CachedNetworkImage(
+                                                          imageUrl: snapshot
+                                                                  .data!
+                                                                  .docs[index]
+                                                              ['photoUrl'],
+                                                        )
+                                                      : Icon(Icons.person),
+                                            ),
+                                          );
+                                        } else {
+                                          return Container();
+                                        }
+                                      }),
                                 ),
                                 trailing: BlocListener<
                                     RemoveMemberFromProjectBloc,

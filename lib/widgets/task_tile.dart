@@ -53,7 +53,7 @@ class _TaskTileState extends State<TaskTile> {
             (index) => Expanded(
               child: InkWell(
                 onTap: () {
-                  if (widget.enableProgressButton == true) {
+                  if (widget.enableProgressButton == true && index == 0) {
                     print('progress');
                     widget.onRemove();
                     project().updateTaskStatus(

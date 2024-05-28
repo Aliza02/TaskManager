@@ -10,7 +10,7 @@ class AppLabels {
 
   static const List<String> projectDetailLabel = [
     'Created on',
-    'Members',
+    'Created by',
   ];
   static const List<String> projectDetailButtonLabel = [
     'Add Member',

@@ -153,12 +153,30 @@ class WorkspaceDetail extends StatelessWidget {
                                     color: AppColors.black,
                                     align: TextAlign.start,
                                   )
-                                : Row(
-                                    children: List.generate(
-                                      3,
-                                      (index) => Icon(Icons.person),
-                                    ),
-                                  )
+                                : StreamBuilder(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('User')
+                                        .doc(projectController
+                                            .projectCreatedBy.string)
+                                        .snapshots(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData &&
+                                          snapshot.connectionState ==
+                                              ConnectionState.active) {
+                                        DocumentSnapshot snap = snapshot.data!;
+                                        return text(
+                                          title: snap.exists
+                                              ? snap['userName']
+                                              : "User Name",
+                                          fontSize: Get.width * 0.04,
+                                          fontWeight: AppFonts.semiBold,
+                                          color: AppColors.black,
+                                          align: TextAlign.start,
+                                        );
+                                      } else {
+                                        return Container();
+                                      }
+                                    })
                           ],
                         ),
                       ],

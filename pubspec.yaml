@@ -50,6 +50,9 @@ dependencies:
   get_it: ^7.6.7
   easy_search_bar: ^2.5.0
   flutter_typeahead: ^5.2.0
+  firebase_messaging: ^14.9.3
+  app_settings: ^5.1.1
+  flutter_local_notifications: ^17.1.2
   
   
 

@@ -5,6 +5,8 @@ import 'package:taskmanager/Utils/utils.dart';
 import 'package:taskmanager/bloc/addprojectBloc/project_bloc.dart';
 import 'package:taskmanager/bloc/addprojectBloc/project_events.dart';
 import 'package:taskmanager/bloc/addprojectBloc/project_states.dart';
+import 'package:taskmanager/bloc/bottomNavBarBloc/bloc.dart';
+import 'package:taskmanager/bloc/bottomNavBarBloc/events.dart';
 import 'package:taskmanager/bloc/memberBloc/member_bloc.dart';
 import 'package:taskmanager/bloc/memberBloc/member_events.dart';
 import 'package:taskmanager/bloc/memberBloc/member_states.dart';
@@ -218,8 +220,10 @@ class _AddWorkspaceState extends State<AddWorkspace>
               listener: (context, state) {
                 if (state is ProjectAdded) {
                   Utils.showSnackBar(state.message);
-                 
-                  Get.toNamed(AppRoutes.allWorkspace);
+
+                 BlocProvider.of<NavBarBloc>(context)
+                      .add(currentPage(index: 2));
+
                   projectDesc.clear();
                   projectName.clear();
                   BlocProvider.of<MemberBloc>(context).add(AddAllMember());

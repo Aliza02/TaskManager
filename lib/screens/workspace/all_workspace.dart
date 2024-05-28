@@ -18,6 +18,8 @@ class AllWorkspace extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var project = locator<Database>;
+    int colorIndex1 = 0;
+    int colorIndex2 = 0;
     final projectController = Get.put(ProjectController());
     return Scaffold(
         body: Container(
@@ -54,17 +56,25 @@ class AllWorkspace extends StatelessWidget {
                     ),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 1,
-                      childAspectRatio: 1.9,
+                      crossAxisCount: 2,
+                      childAspectRatio: 1.0,
                     ),
                     itemBuilder: (context, index) {
                       DocumentSnapshot snap = snapshot.data!.docs[index];
-                      print(snap.data());
+                      if (colorIndex1 == 3 || colorIndex2 == 3) {
+                        colorIndex1 = 0;
+                        colorIndex2 = 0;
+                      }
+
                       return InkWell(
                         onTap: () {
                           projectController.members.clear();
                           Get.toNamed(AppRoutes.workSpaceDetail);
                           projectController.projectId.value = snap['projectId'];
+                          projectController.projectCreationDate.value =
+                              snap['createdOn'];
+                          projectController.projectCreatedBy.value =
+                              snap['projectCreatedBy'];
                           projectController.projectName.value =
                               snap['projectName'];
                           projectController.projectDescription.value =
@@ -72,13 +82,15 @@ class AllWorkspace extends StatelessWidget {
                           projectController.members.addAll(snap['email']);
                         },
                         child: WorkSpaceContainer(
-                          projectId: 'sd',
+                          projectId: snap['projectId'].toString(),
                           projectCreationDate: snap['createdOn'],
-                          membersLength: 3,
+                          membersLength: snap['email'].length,
                           projectName: snap['projectName'],
                           all: true,
-                          color1: AppColors.workspaceGradientColor1[2],
-                          color2: AppColors.workspaceGradientColor2[0],
+                          color1:
+                              AppColors.workspaceGradientColor1[colorIndex1++],
+                          color2:
+                              AppColors.workspaceGradientColor2[colorIndex2++],
                         ),
                       );
                     },

@@ -82,7 +82,13 @@ class Database {
   }
 
   Future<QuerySnapshot> getAllProjects() async {
-    return await firestore.collection('Project').get();
+    return await firestore
+        .collection('Project')
+        .where(Filter.or(
+            Filter("email", arrayContains: Auth.auth!.currentUser!.email),
+            Filter('projectCreatedBy',
+                isEqualTo: Auth.auth!.currentUser!.email)))
+        .get();
   }
 
   Stream<QuerySnapshot> getTasksAsPerStatus({required String taskStatus}) {
@@ -161,6 +167,13 @@ class Database {
     return firestore
         .collection('Project')
         .doc(projectController.projectId.string)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getUserDetail() {
+    return firestore
+        .collection('User')
+        .where('email', isEqualTo: projectController.projectCreatedBy.value)
         .snapshots();
   }
 }

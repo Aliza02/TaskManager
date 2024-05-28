@@ -129,7 +129,6 @@ class WorkSpaceContainer extends StatelessWidget {
                                 child: CircularProgressIndicator(),
                               );
                             } else {
-                              print("sad:${snapshot.data}");
                               return ProgressStatus(
                                 backgroundColor: Colors.grey,
                                 strokeWidth: 3,
@@ -152,33 +151,43 @@ class WorkSpaceContainer extends StatelessWidget {
                 )
               : SizedBox(),
           all
-              ? Container(
-                  width: Get.width * 0.3,
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.only(
-                    left: Get.width * 0.04,
-                    top: Get.height * 0.013,
-                  ),
-                  // padding: EdgeInsets.only(
-                  //   left: Get.width * 0.04,
-                  //   // bottom: Get.height * 0.01,
-                  // ),
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        Get.width * 0.03,
-                      ),
-                    ),
-                    color: Colors.white,
-                  ),
-                  child: text(
-                    title: "Completed",
-                    fontSize: Get.width * 0.04,
-                    align: TextAlign.start,
-                    fontWeight: AppFonts.semiBold,
-                    color: AppColors.black,
-                  ),
-                )
+              ? FutureBuilder(
+                  future: project().getProgress(id: projectId),
+                  builder: (context, snapshot) {
+                    return !snapshot.hasData
+                        ? Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : Container(
+                            width: Get.width * 0.3,
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.only(
+                              left: Get.width * 0.04,
+                              top: Get.height * 0.013,
+                            ),
+                            // padding: EdgeInsets.only(
+                            //   left: Get.width * 0.04,
+                            //   // bottom: Get.height * 0.01,
+                            // ),
+                            decoration: ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  Get.width * 0.03,
+                                ),
+                              ),
+                              color: Colors.white,
+                            ),
+                            child: text(
+                              title: snapshot.data! * 100 == 100
+                                  ? "Completed"
+                                  : "In Progress",
+                              fontSize: Get.width * 0.04,
+                              align: TextAlign.start,
+                              fontWeight: AppFonts.semiBold,
+                              color: AppColors.black,
+                            ),
+                          );
+                  })
               : SizedBox(),
         ],
       ),
