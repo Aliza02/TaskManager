@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'dart:convert';
+import 'dart:io' as io;
 import 'dart:math';
 
 import 'package:app_settings/app_settings.dart';
@@ -6,10 +7,18 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:googleapis_auth/auth_io.dart' as auth;
+import 'package:googleapis/authorizedbuyersmarketplace/v1.dart'
+    as servicecontrol;
+import 'package:taskmanager/data/databse/database_functions.dart';
+import 'package:taskmanager/injection/database.dart';
+
 import 'package:taskmanager/routes/routes.dart';
+import 'package:http/http.dart' as http;
 
 class NotificationServices {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
+  var project = locator<Database>;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 //  initialize notification to show on screen
@@ -28,6 +37,10 @@ class NotificationServices {
       initializedSettings,
       onDidReceiveNotificationResponse: (payload) {
         handleMessage(context, message);
+        project().saveNotifications(
+          title: message.notification!.title.toString(),
+          body: message.notification!.body.toString(),
+        );
       },
     );
   }
@@ -93,7 +106,7 @@ class NotificationServices {
   // get device token for sending notifications
   Future<String> getDeviceToken() async {
     String? token = await messaging.getToken();
-    print(token);
+    // print(token);
     return token!;
   }
 
@@ -107,7 +120,7 @@ class NotificationServices {
 // listen to notification
   void firebaseinit(BuildContext context) {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (Platform.isAndroid) {
+      if (io.Platform.isAndroid) {
         initLocalNotifications(context, message);
         showNotifications(message);
       } else {
@@ -124,7 +137,9 @@ class NotificationServices {
 // redirect to screen
   void handleMessage(BuildContext context, RemoteMessage message) {
     if (message.notification != null) {
-      Get.toNamed(AppRoutes.notification);
+      Get.toNamed(
+        AppRoutes.notification,
+      );
     } else {
       Get.toNamed(AppRoutes.main);
     }
@@ -143,6 +158,50 @@ class NotificationServices {
 
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
       handleMessage(context, event);
+      project().saveNotifications(
+        title: event.notification!.title.toString(),
+        body: event.notification!.body.toString(),
+      );
     });
+  }
+
+  Future<String> getAccessToken() async {
+    List<String> scope = [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/firebase.database",
+      "https://www.googleapis.com/auth/firebase.messaging",
+    ];
+  }
+
+  Future<void> sendFCM({required String projectName}) async {
+    print(serverKey);
+
+    const endPoint =
+        "https://fcm.googleapis.com/v1/projects/taskmanager-6d7c9/messages:send";
+    final currentToken = await getDeviceToken();
+    final Map<String, dynamic> message = {
+      'message': {
+        'token': currentToken,
+        'notification': {
+          'title': 'You have deadline for today',
+          'body': projectName,
+        }
+      }
+    };
+
+    final response = await http.post(
+      Uri.parse(endPoint),
+      headers: {
+        'Content-Type': "application/json",
+        'Authorization': 'Bearer $serverKey',
+      },
+      body: json.encode(message),
+    );
+
+    if (response.statusCode == 200) {
+      print('success');
+    } else {
+      print(response.body);
+    }
   }
 }

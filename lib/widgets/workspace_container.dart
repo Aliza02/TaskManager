@@ -165,10 +165,7 @@ class WorkSpaceContainer extends StatelessWidget {
                               left: Get.width * 0.04,
                               top: Get.height * 0.013,
                             ),
-                            // padding: EdgeInsets.only(
-                            //   left: Get.width * 0.04,
-                            //   // bottom: Get.height * 0.01,
-                            // ),
+                            
                             decoration: ShapeDecoration(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(

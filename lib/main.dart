@@ -9,31 +9,49 @@ import 'package:taskmanager/routes/pages.dart';
 import 'package:taskmanager/routes/routes.dart';
 
 void main() async {
-  
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
   setup();
   FirebaseMessaging.onBackgroundMessage(firebaseBackgroundMessaging);
   runApp(const MyApp());
 }
-@pragma('vm:entry-point')
 
-Future<void> firebaseBackgroundMessaging(RemoteMessage message)async{
+@pragma('vm:entry-point')
+Future<void> firebaseBackgroundMessaging(RemoteMessage message) async {
   await Firebase.initializeApp();
 }
-class MyApp extends StatelessWidget {
+
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  void firebaseinit() async {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    firebaseinit();
+  }
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.light,
       getPages: Pages.pages,
-      initialRoute: Auth.auth.currentUser==null? AppRoutes.user: AppRoutes.main,
+      initialRoute:
+          Auth.auth.currentUser == null ? AppRoutes.user : AppRoutes.main,
       darkTheme: ThemeData(
           scaffoldBackgroundColor: Colors.black,
           textTheme: TextTheme(

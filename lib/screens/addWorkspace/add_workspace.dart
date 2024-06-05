@@ -12,8 +12,7 @@ import 'package:taskmanager/bloc/memberBloc/member_events.dart';
 import 'package:taskmanager/bloc/memberBloc/member_states.dart';
 import 'package:taskmanager/constants/colors.dart';
 import 'package:taskmanager/constants/fonts.dart';
-import 'package:taskmanager/data/email/email_sending.dart';
-import 'package:taskmanager/routes/routes.dart';
+
 import 'package:taskmanager/screens/workspace/chips.dart';
 import 'package:taskmanager/widgets/text.dart';
 import 'package:taskmanager/widgets/workspace/header.dart';
@@ -55,6 +54,7 @@ class _AddWorkspaceState extends State<AddWorkspace>
 
     return header(
       child: SingleChildScrollView(
+        key: ValueKey<int>(2),
         scrollDirection: Axis.vertical,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,7 +221,7 @@ class _AddWorkspaceState extends State<AddWorkspace>
                 if (state is ProjectAdded) {
                   Utils.showSnackBar(state.message);
 
-                 BlocProvider.of<NavBarBloc>(context)
+                  BlocProvider.of<NavBarBloc>(context)
                       .add(currentPage(index: 2));
 
                   projectDesc.clear();

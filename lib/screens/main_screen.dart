@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -6,13 +7,30 @@ import 'package:taskmanager/bloc/bottomNavBarBloc/events.dart';
 import 'package:taskmanager/bloc/bottomNavBarBloc/states.dart';
 import 'package:taskmanager/constants/colors.dart';
 import 'package:taskmanager/constants/icons.dart';
+import 'package:taskmanager/data/Authentications/google_signin.dart';
+import 'package:taskmanager/data/databse/database_functions.dart';
+import 'package:taskmanager/injection/database.dart';
+import 'package:taskmanager/notification/notification_services.dart';
 import 'package:taskmanager/screens/addWorkspace/add_workspace.dart';
 import 'package:taskmanager/screens/home_screen.dart';
 import 'package:taskmanager/screens/notification/notification.dart';
 import 'package:taskmanager/screens/workspace/all_workspace.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  var project = locator<Database>;
+
+  @override
+  void initState() {
+    super.initState();
+    project().sendDeadlineReminder();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +65,7 @@ class MainScreen extends StatelessWidget {
                 onPressed: () {
                   BlocProvider.of<NavBarBloc>(context)
                       .add(currentPage(index: index));
+                  // noti.sendFCM();
                 },
                 icon: BlocBuilder<NavBarBloc, NavBarStates>(
                   builder: (context, state) {

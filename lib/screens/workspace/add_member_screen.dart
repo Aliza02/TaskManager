@@ -104,6 +104,7 @@ class AddMemberScreen extends StatelessWidget {
                             physics: const BouncingScrollPhysics(),
                             itemCount: snap['email'].length,
                             itemBuilder: (context, index) {
+                              print("members length:${snap['email'].length}");
                               return ListTile(
                                 title: text(
                                     title: snap['email'][index],
@@ -122,18 +123,17 @@ class AddMemberScreen extends StatelessWidget {
                                           .snapshots(),
                                       builder: (context, snapshot) {
                                         if (snapshot.hasData) {
-                                        
+                                          print(
+                                              snapshot.data!.docs[0]['email']);
                                           return CircleAvatar(
                                             child: ClipOval(
-                                              child:
-                                                  snapshot.data!.docs.isNotEmpty
-                                                      ? CachedNetworkImage(
-                                                          imageUrl: snapshot
-                                                                  .data!
-                                                                  .docs[index]
-                                                              ['photoUrl'],
-                                                        )
-                                                      : Icon(Icons.person),
+                                              child: snapshot
+                                                      .data!.docs.isNotEmpty
+                                                  ? CachedNetworkImage(
+                                                      imageUrl: snapshot.data!
+                                                          .docs[0]['photoUrl'],
+                                                    )
+                                                  : Icon(Icons.person),
                                             ),
                                           );
                                         } else {

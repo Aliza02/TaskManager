@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:taskmanager/Utils/utils.dart';
 import 'package:taskmanager/controllers/project_controller.dart';
 import 'package:taskmanager/data/Authentications/google_signin.dart';
 import 'package:taskmanager/bloc/HomePageTaskTabsBloc/bloc.dart';
@@ -41,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     notification.requestPermission();
-    notification.getDeviceToken();
+
     notification.firebaseinit(context);
     notification.setupInteractMessage(context);
     super.initState();
@@ -50,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: ValueKey<int>(1),
       appBar: AppBar(
         elevation: 0.0,
         scrolledUnderElevation: 0.0,
@@ -126,10 +128,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               (index) {
                                 DocumentSnapshot snap =
                                     snapshot.data!.docs[index];
-                                 projectController.projectCreatedBy.value =
-                                        snap['projectCreatedBy'];
-                                        projectController.members
-                                        .addAll(snap['email']);
+                                projectController.projectCreatedBy.value =
+                                    snap['projectCreatedBy'];
+                                projectController.members.addAll(snap['email']);
                                 if (colorIndex1 == 3 || colorIndex2 == 3) {
                                   colorIndex1 = 0;
                                   colorIndex2 = 0;
@@ -150,6 +151,83 @@ class _HomeScreenState extends State<HomeScreen> {
                                         .value = snap['createdOn'];
                                     projectController.members
                                         .addAll(snap['email']);
+                                  },
+                                  onLongPress: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            backgroundColor: AppColors.white,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                Get.width * 0.02,
+                                              ),
+                                            ),
+                                            elevation: 0.0,
+                                            title: text(
+                                              title: "Delete Workspace",
+                                              fontSize: Get.width * 0.065,
+                                              fontWeight: AppFonts.bold,
+                                              color: AppColors.black,
+                                              align: TextAlign.center,
+                                            ),
+                                            actions: List.generate(
+                                              2,
+                                              (index) => ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  elevation: 0.0,
+                                                  backgroundColor: AppColors
+                                                      .workspaceGradientColor1[
+                                                          index]
+                                                      .withOpacity(0.3),
+                                                ),
+                                                onPressed: () async {
+                                                  if (index == 0) {
+                                                    Get.back();
+                                                  } else {
+                                                    projectController
+                                                            .projectId.value =
+                                                        snap['projectId'];
+                                                    Get.back();
+                                                    Utils.showtoast(
+                                                        "Workspace has been deleted");
+                                                    await FirebaseFirestore
+                                                        .instance
+                                                        .collection("Project")
+                                                        .doc(projectController
+                                                            .projectId.value
+                                                            .toString())
+                                                        .delete();
+                                                  }
+                                                },
+                                                child: text(
+                                                  title: [
+                                                    "Cancel",
+                                                    "Delete"
+                                                  ][index],
+                                                  fontSize: Get.width * 0.04,
+                                                  fontWeight: AppFonts.semiBold,
+                                                  color: AppColors.black,
+                                                  align: TextAlign.center,
+                                                ),
+                                              ),
+                                            ),
+                                            content: Container(
+                                              decoration: const BoxDecoration(
+                                                color: AppColors.white,
+                                              ),
+                                              child: text(
+                                                title:
+                                                    "Are you sure you want to delete this workspace?",
+                                                fontSize: Get.width * 0.04,
+                                                fontWeight: AppFonts.regular,
+                                                color: AppColors.grey,
+                                                align: TextAlign.start,
+                                              ),
+                                            ),
+                                          );
+                                        });
                                   },
                                   child: WorkSpaceContainer(
                                     projectId: snap['projectId'].toString(),

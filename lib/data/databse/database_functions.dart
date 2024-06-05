@@ -4,9 +4,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:taskmanager/controllers/project_controller.dart';
 import 'package:taskmanager/data/Authentications/google_signin.dart';
+import 'package:taskmanager/notification/notification_services.dart';
 
 class Database {
   final projectController = Get.put(ProjectController());
+  NotificationServices noti = NotificationServices();
   Database() {
     print('sda');
   }
@@ -176,4 +178,46 @@ class Database {
         .where('email', isEqualTo: projectController.projectCreatedBy.value)
         .snapshots();
   }
+
+  Future<void> sendDeadlineReminder() async {
+    DateTime today = DateTime.now();
+
+    QuerySnapshot snap = await firestore
+        .collectionGroup('projectTasks')
+        .where('Members', arrayContains: Auth.auth.currentUser!.email)
+        .where('status', isNotEqualTo: 'Completed')
+        .where('deadlineDate',
+            isEqualTo: "${today.day}/${today.month}/${today.year}")
+        .get();
+    if (snap.docs.isNotEmpty) {
+      print("length:${snap.docs.length}");
+      for (int i = 0; i < snap.docs.length; i++) {
+        DocumentSnapshot doc = snap.docs[i];
+        print(doc['projectName']);
+        noti.sendFCM(projectName: doc['projectName']);
+      }
+    }
+  }
+
+  Future<void> saveNotifications({
+    required String title,
+    required String body,
+  }) async {
+    DateTime today = DateTime.now();
+    await firestore.collection('Notifications').doc().set({
+      'title': title,
+      'body': body,
+      'receiveDate': "${today.day}/${today.month}/${today.year}",
+      'receiveTo': Auth.auth.currentUser!.uid
+    });
+  }
+
+  // Stream<QuerySnapshot> getNotificationList() {
+  //   return firestore
+  //       .collection('Notifications')
+  //       .where('receiveTo', isEqualTo: Auth.auth.currentUser!.uid)
+  //       .orderBy('receiveDate', descending: true)
+  //       .limit(10)
+  //       .snapshots();
+  // }
 }
