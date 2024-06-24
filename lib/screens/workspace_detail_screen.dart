@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:taskmanager/Utils/utils.dart';
@@ -7,8 +6,6 @@ import 'package:taskmanager/constants/colors.dart';
 import 'package:taskmanager/constants/fonts.dart';
 import 'package:taskmanager/constants/labels.dart';
 import 'package:taskmanager/controllers/project_controller.dart';
-import 'package:taskmanager/data/databse/database_functions.dart';
-import 'package:taskmanager/injection/database.dart';
 import 'package:taskmanager/routes/routes.dart';
 import 'package:taskmanager/widgets/text.dart';
 

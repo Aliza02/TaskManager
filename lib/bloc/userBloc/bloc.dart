@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:taskmanager/data/Authentications/google_signin.dart';
 import 'package:taskmanager/bloc/userBloc/events.dart';
 import 'package:taskmanager/bloc/userBloc/states.dart';

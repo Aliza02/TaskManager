@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
@@ -6,7 +5,6 @@ import 'package:taskmanager/constants/colors.dart';
 import 'package:taskmanager/constants/fonts.dart';
 import 'package:taskmanager/constants/icons.dart';
 import 'package:taskmanager/constants/labels.dart';
-import 'package:taskmanager/data/Authentications/google_signin.dart';
 import 'package:taskmanager/data/databse/database_functions.dart';
 import 'package:taskmanager/injection/database.dart';
 import 'package:taskmanager/routes/routes.dart';

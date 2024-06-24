@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_utils/get_utils.dart';
 import 'package:taskmanager/constants/colors.dart';
 import 'package:taskmanager/constants/fonts.dart';
 import 'package:taskmanager/controllers/project_controller.dart';
@@ -9,7 +8,6 @@ import 'package:taskmanager/data/databse/database_functions.dart';
 import 'package:taskmanager/injection/database.dart';
 import 'package:taskmanager/routes/routes.dart';
 import 'package:taskmanager/widgets/text.dart';
-import 'package:taskmanager/widgets/workspace/header.dart';
 import 'package:taskmanager/widgets/workspace_container.dart';
 
 class AllWorkspace extends StatelessWidget {

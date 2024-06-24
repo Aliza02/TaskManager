@@ -1,10 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:taskmanager/controllers/project_controller.dart';
-import 'package:taskmanager/data/Authentications/google_signin.dart';
 import 'package:taskmanager/data/databse/database_functions.dart';
 import 'package:taskmanager/injection/database.dart';
 

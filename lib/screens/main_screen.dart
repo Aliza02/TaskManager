@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -7,10 +6,8 @@ import 'package:taskmanager/bloc/bottomNavBarBloc/events.dart';
 import 'package:taskmanager/bloc/bottomNavBarBloc/states.dart';
 import 'package:taskmanager/constants/colors.dart';
 import 'package:taskmanager/constants/icons.dart';
-import 'package:taskmanager/data/Authentications/google_signin.dart';
 import 'package:taskmanager/data/databse/database_functions.dart';
 import 'package:taskmanager/injection/database.dart';
-import 'package:taskmanager/notification/notification_services.dart';
 import 'package:taskmanager/screens/addWorkspace/add_workspace.dart';
 import 'package:taskmanager/screens/home_screen.dart';
 import 'package:taskmanager/screens/notification/notification.dart';
