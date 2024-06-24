@@ -11,6 +11,7 @@ import 'package:taskmanager/bloc/userBloc/bloc.dart';
 import 'package:taskmanager/routes/routes.dart';
 import 'package:taskmanager/screens/Signup-in/user.dart';
 import 'package:taskmanager/screens/addWorkspace/add_workspace.dart';
+import 'package:taskmanager/screens/comments/comments_screen.dart';
 import 'package:taskmanager/screens/home_screen.dart';
 import 'package:taskmanager/screens/main_screen.dart';
 import 'package:taskmanager/screens/notification/notification.dart';
@@ -116,6 +117,12 @@ class Pages {
     GetPage(
       name: AppRoutes.allWorkspace,
       page: () => AllWorkspace(),
+      transition: GetTrasition.Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: 500),
+    ),
+    GetPage(
+      name: AppRoutes.comment,
+      page: () => Comments(),
       transition: GetTrasition.Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: 500),
     ),

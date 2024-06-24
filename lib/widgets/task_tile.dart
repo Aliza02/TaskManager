@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
@@ -5,12 +6,15 @@ import 'package:taskmanager/constants/colors.dart';
 import 'package:taskmanager/constants/fonts.dart';
 import 'package:taskmanager/constants/icons.dart';
 import 'package:taskmanager/constants/labels.dart';
+import 'package:taskmanager/data/Authentications/google_signin.dart';
 import 'package:taskmanager/data/databse/database_functions.dart';
 import 'package:taskmanager/injection/database.dart';
+import 'package:taskmanager/routes/routes.dart';
 import 'package:taskmanager/widgets/text.dart';
 
 class TaskTile extends StatefulWidget {
   final String taskName;
+  final String id;
   final String deadlineDate;
   final String deadlineTime;
   final String projectName;
@@ -19,6 +23,7 @@ class TaskTile extends StatefulWidget {
   final Animation<double> animation;
   final bool enableProgressButton;
   final bool disableSlideButton;
+  final String taskStatus;
   const TaskTile(
       {super.key,
       required this.taskName,
@@ -29,7 +34,9 @@ class TaskTile extends StatefulWidget {
       required this.deadlineTime,
       required this.projectName,
       required this.enableProgressButton,
-      required this.disableSlideButton});
+      required this.disableSlideButton,
+      required this.id,
+      required this.taskStatus});
 
   @override
   State<TaskTile> createState() => _TaskTileState();
@@ -37,8 +44,12 @@ class TaskTile extends StatefulWidget {
 
 class _TaskTileState extends State<TaskTile> {
   var project = locator<Database>;
+  TextEditingController commentController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return SizeTransition(
       sizeFactor: widget.animation,
       child: Slidable(
@@ -133,6 +144,14 @@ class _TaskTileState extends State<TaskTile> {
               color: Colors.grey,
               align: TextAlign.start,
             ),
+            trailing: widget.taskStatus == 'none'
+                ? IconButton(
+                    onPressed: () {
+                      Get.toNamed(AppRoutes.comment, arguments: widget.id);
+                    },
+                    icon: Icon(Icons.mode_comment_outlined),
+                  )
+                : null,
           ),
         ),
       ),

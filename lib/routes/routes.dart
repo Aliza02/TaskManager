@@ -8,4 +8,5 @@ class AppRoutes {
   static const String addWorkspce = '/addWorkspace';
   static const String notification = '/notification';
   static const String allWorkspace = '/allWorkspace';
+  static const String comment = '/Comment';
 }

@@ -9,10 +9,10 @@ import 'package:taskmanager/routes/pages.dart';
 import 'package:taskmanager/routes/routes.dart';
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   setup();
   FirebaseMessaging.onBackgroundMessage(firebaseBackgroundMessaging);
   runApp(const MyApp());

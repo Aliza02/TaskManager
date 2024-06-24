@@ -54,49 +54,60 @@ class Notifications extends StatelessWidget {
                       child: CircularProgressIndicator(),
                     );
                   } else {
-                    return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        DocumentSnapshot doc = snapshot.data!.docs[index];
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            text(
-                                title: doc['receiveDate'],
-                                fontSize: Get.width * 0.04,
-                                fontWeight: AppFonts.semiBold,
-                                color: AppColors.grey,
-                                align: TextAlign.start),
-                            Container(
-                              margin: EdgeInsets.symmetric(
-                                vertical: Get.height * 0.01,
-                              ),
-                              decoration: BoxDecoration(
-                                border:
-                                    Border.all(width: 1, color: Colors.grey),
-                                borderRadius: BorderRadius.circular(
-                                  10.0,
-                                ),
-                              ),
-                              child: ListTile(
-                                title: text(
-                                    title: doc['title'],
-                                    fontSize: Get.width * 0.04,
-                                    fontWeight: AppFonts.semiBold,
-                                    color: AppColors.black,
-                                    align: TextAlign.start),
-                                subtitle: text(
-                                    title: doc['body'],
-                                    fontSize: Get.width * 0.03,
-                                    fontWeight: AppFonts.semiBold,
-                                    color: AppColors.grey,
-                                    align: TextAlign.start),
-                              ),
+                    return snapshot.data!.docs.isNotEmpty &&
+                            snapshot.connectionState == ConnectionState.active
+                        ? ListView.builder(
+                            itemCount: snapshot.data!.docs.length,
+                            itemBuilder: (context, index) {
+                              DocumentSnapshot doc = snapshot.data!.docs[index];
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  text(
+                                      title: doc['receiveDate'],
+                                      fontSize: Get.width * 0.04,
+                                      fontWeight: AppFonts.semiBold,
+                                      color: AppColors.grey,
+                                      align: TextAlign.start),
+                                  Container(
+                                    margin: EdgeInsets.symmetric(
+                                      vertical: Get.height * 0.01,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          width: 1, color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(
+                                        10.0,
+                                      ),
+                                    ),
+                                    child: ListTile(
+                                      title: text(
+                                          title: doc['title'],
+                                          fontSize: Get.width * 0.04,
+                                          fontWeight: AppFonts.semiBold,
+                                          color: AppColors.black,
+                                          align: TextAlign.start),
+                                      subtitle: text(
+                                          title: doc['body'],
+                                          fontSize: Get.width * 0.03,
+                                          fontWeight: AppFonts.semiBold,
+                                          color: AppColors.grey,
+                                          align: TextAlign.start),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          )
+                        : Center(
+                            child: text(
+                              title: 'No Notification to display',
+                              align: TextAlign.center,
+                              color: AppColors.grey,
+                              fontSize: Get.width * 0.045,
+                              fontWeight: AppFonts.semiBold,
                             ),
-                          ],
-                        );
-                      },
-                    );
+                          );
                   }
                 }),
           ),

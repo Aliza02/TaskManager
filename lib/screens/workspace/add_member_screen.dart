@@ -12,8 +12,6 @@ import 'package:taskmanager/bloc/removeMemberFromProjectBloc/removeMember_events
 import 'package:taskmanager/bloc/removeMemberFromProjectBloc/removeMember_states.dart';
 import 'package:taskmanager/constants/colors.dart';
 import 'package:taskmanager/constants/fonts.dart';
-import 'package:taskmanager/controllers/project_controller.dart';
-import 'package:taskmanager/data/Authentications/google_signin.dart';
 import 'package:taskmanager/data/databse/database_functions.dart';
 import 'package:taskmanager/injection/database.dart';
 import 'package:taskmanager/widgets/text.dart';
@@ -104,7 +102,7 @@ class AddMemberScreen extends StatelessWidget {
                             physics: const BouncingScrollPhysics(),
                             itemCount: snap['email'].length,
                             itemBuilder: (context, index) {
-                              print("members length:${snap['email'].length}");
+                              print("members length:${snap['email']}");
                               return ListTile(
                                 title: text(
                                     title: snap['email'][index],
@@ -123,8 +121,6 @@ class AddMemberScreen extends StatelessWidget {
                                           .snapshots(),
                                       builder: (context, snapshot) {
                                         if (snapshot.hasData) {
-                                          print(
-                                              snapshot.data!.docs[0]['email']);
                                           return CircleAvatar(
                                             child: ClipOval(
                                               child: snapshot

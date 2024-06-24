@@ -42,7 +42,7 @@ class WorkSpaceMembers extends StatelessWidget {
                       return Container();
                     }
                   }),
-              membersLength != 0 && membersLength == 2
+              membersLength != 0 && membersLength >= 2
                   ? StreamBuilder(
                       stream: FirebaseFirestore.instance
                           .collection('User')
@@ -51,35 +51,34 @@ class WorkSpaceMembers extends StatelessWidget {
                           .snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          print(snapshot.data!.docs[0]);
+                          print("members:${snapshot.data!.docs[0].data()}");
                           return Container(
-                          margin: EdgeInsets.only(
-                            left: Get.width * 0.06,
-                          ),
-                          child: CircleAvatar(
-                            child: ClipOval(
-                                child: snapshot.data!.docs.isNotEmpty
-                                    ? CachedNetworkImage(
-                                        imageUrl: snapshot
-                                            .data!.docs[0]['photoUrl']
-                                            .toString(),
-                                      )
-                                    : Icon(Icons.person)),
-                          ),
-                        );
-                        }else{
+                            margin: EdgeInsets.only(
+                              left: Get.width * 0.06,
+                            ),
+                            child: CircleAvatar(
+                              child: ClipOval(
+                                  child: snapshot.data!.docs.isNotEmpty
+                                      ? CachedNetworkImage(
+                                          imageUrl: snapshot
+                                              .data!.docs[0]['photoUrl']
+                                              .toString(),
+                                        )
+                                      : Icon(Icons.person)),
+                            ),
+                          );
+                        } else {
                           return Container();
                         }
-                        
                       })
                   : SizedBox(),
-              membersLength >= 3
+              membersLength == 3
                   ? Container(
                       margin: EdgeInsets.only(
                         left: Get.width * 0.12,
                       ),
                       child: CircleAvatar(
-                        child: Text("${membersLength - 3}+"),
+                        child: Text("${membersLength - (membersLength - 1)}+"),
                       ),
                     )
                   : SizedBox()

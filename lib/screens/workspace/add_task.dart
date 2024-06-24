@@ -286,6 +286,8 @@ class _AddTaskState extends State<AddTask> with SingleTickerProviderStateMixin {
                       deadlineDate: date.text,
                       deadlineTime: time.text,
                       member: membersTaskAssignTo));
+
+                  project().sendDeadlineReminder();
                 },
                 child: text(
                   title: 'Save',

@@ -83,14 +83,14 @@ class Database {
     return true;
   }
 
-  Future<QuerySnapshot> getAllProjects() async {
-    return await firestore
+  Stream<QuerySnapshot> getAllProjects() {
+    return firestore
         .collection('Project')
         .where(Filter.or(
             Filter("email", arrayContains: Auth.auth!.currentUser!.email),
             Filter('projectCreatedBy',
                 isEqualTo: Auth.auth!.currentUser!.email)))
-        .get();
+        .snapshots();
   }
 
   Stream<QuerySnapshot> getTasksAsPerStatus({required String taskStatus}) {
@@ -212,12 +212,31 @@ class Database {
     });
   }
 
-  // Stream<QuerySnapshot> getNotificationList() {
-  //   return firestore
-  //       .collection('Notifications')
-  //       .where('receiveTo', isEqualTo: Auth.auth.currentUser!.uid)
-  //       .orderBy('receiveDate', descending: true)
-  //       .limit(10)
-  //       .snapshots();
-  // }
+  Future<bool> addComments(
+      {required String id, required String comment}) async {
+    FirebaseFirestore.instance.collection('Comments').doc(id).set({
+      'taskId': id,
+    });
+    FirebaseFirestore.instance
+        .collection('Comments')
+        .doc(id)
+        .collection('taskComments')
+        .doc()
+        .set({
+      'comment': comment,
+      'author': Auth.auth.currentUser!.displayName,
+      'time': DateTime.now(),
+    });
+
+    return true;
+  }
+
+  Stream<QuerySnapshot> getComments({required String id}) {
+    return FirebaseFirestore.instance
+        .collection('Comments')
+        .doc(id)
+        .collection('taskComments')
+        .orderBy('time', descending: true)
+        .snapshots();
+  }
 }
