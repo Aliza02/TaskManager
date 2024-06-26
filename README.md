@@ -11,16 +11,17 @@ Flutter application that functions as a project collaboration and management too
 #### Dependency Injection
 ## UI
 ### Login and SignUp
-![WorkSync](https://github.com/Aliza02/TaskManager/assets/83037489/1d348d5c-0e02-44c5-9812-c76b1b49f20f)
+<img src="https://github.com/Aliza02/TaskManager/assets/83037489/1d348d5c-0e02-44c5-9812-c76b1b49f20f" height="600px" width="800px">
 
 ### Home Screen, Add and Delete Workspace
-![WorkSync (1)](https://github.com/Aliza02/TaskManager/assets/83037489/e5de6175-9c66-4cbb-b850-62a5dd09d010)
+<img src="https://github.com/Aliza02/TaskManager/assets/83037489/e5de6175-9c66-4cbb-b850-62a5dd09d010" height="600px" width="800px">
 
 ### Workspace Details, Add and Delete Tasks
-![3](https://github.com/Aliza02/TaskManager/assets/83037489/0c9cebda-6f2f-40fc-947d-3ce0abfba5a4)
+<img src="https://github.com/Aliza02/TaskManager/assets/83037489/0c9cebda-6f2f-40fc-947d-3ce0abfba5a4" height="600px" width="800px">
 
 ### All Workspace and Comments
-![4](https://github.com/Aliza02/TaskManager/assets/83037489/cec7adb1-f695-4620-b761-e6186449b3ee)
+<img src="https://github.com/Aliza02/TaskManager/assets/83037489/cec7adb1-f695-4620-b761-e6186449b3ee" height="600px" width="800px">
 
 ### Notifications and Add Members
-![5](https://github.com/Aliza02/TaskManager/assets/83037489/4ddf292a-7e83-4cd8-950d-5ef8cb1499c4)
+<img src="https://github.com/Aliza02/TaskManager/assets/83037489/4ddf292a-7e83-4cd8-950d-5ef8cb1499c4" height="600px" width="800px">
+
